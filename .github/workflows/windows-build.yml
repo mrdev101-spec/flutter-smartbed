@@ -35,7 +35,8 @@ jobs:
           7z a ../../../flutter_smartbed_windows.zip ./*
           
       - name: Upload Release
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: windows-release
           path: build/flutter_smartbed_windows.zip
+          retention-days: 90
