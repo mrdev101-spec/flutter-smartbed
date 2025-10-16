@@ -28,11 +28,20 @@ jobs:
         run: flutter pub get
       
       - name: Build Windows App
-        run: flutter build windows --release
+        run: |
+          flutter build windows --release
+          dir build\windows\runner\Release
       
       - name: Create Installer
         run: |
-          Compress-Archive -Path build\windows\runner\Release\* -DestinationPath flutter_smartbed_windows.zip
+          $source = "build\windows\runner\Release"
+          if (Test-Path $source) {
+            Write-Host "Creating ZIP from: $source"
+            Compress-Archive -Path "$source\*" -DestinationPath flutter_smartbed_windows.zip -Force
+          } else {
+            Write-Error "Build directory not found: $source"
+            exit 1
+          }
       
       - name: Create Release
         uses: softprops/action-gh-release@v1
