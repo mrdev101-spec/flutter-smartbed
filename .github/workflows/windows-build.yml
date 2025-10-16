@@ -1,0 +1,41 @@
+name: Build Windows App
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:  # allows manual triggering
+
+jobs:
+  build:
+    runs-on: windows-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.16.0'
+          channel: 'stable'
+          
+      - name: Enable Windows Build
+        run: flutter config --enable-windows-desktop
+        
+      - name: Get Dependencies
+        run: flutter pub get
+        
+      - name: Build Windows App
+        run: flutter build windows
+        
+      - name: Create Release ZIP
+        run: |
+          cd build/windows/runner/Release
+          7z a ../../../flutter_smartbed_windows.zip ./*
+          
+      - name: Upload Release
+        uses: actions/upload-artifact@v3
+        with:
+          name: windows-release
+          path: build/flutter_smartbed_windows.zip
