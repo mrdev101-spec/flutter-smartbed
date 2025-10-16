@@ -51,4 +51,3 @@ jobs:
           name: windows-app
           path: flutter_smartbed_windows.zip
           retention-days: 90
-          retention-days: 90
