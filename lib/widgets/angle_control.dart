@@ -21,21 +21,25 @@ class AngleControl extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 _buildAngleSlider(
-                  'Head Angle',
-                  bedState.headAngle,
-                  (value) => bedState.setHeadAngle(value),
+                  title: 'Head Angle',
+                  value: bedState.headAngle,
+                  onChanged: (value) => bedState.setHeadAngle(value),
+                  max: 85,
+                  label: '°',
                 ),
                 const SizedBox(height: 16),
                 _buildAngleSlider(
-                  'Foot Angle',
-                  bedState.footAngle,
-                  (value) => bedState.setFootAngle(value),
+                  title: 'Foot Angle',
+                  value: bedState.footAngle,
+                  onChanged: (value) => bedState.setFootAngle(value),
+                  max: 45,
+                  label: '°',
                 ),
                 const SizedBox(height: 16),
                 _buildAngleSlider(
-                  'Height',
-                  bedState.height,
-                  (value) => bedState.setHeight(value),
+                  title: 'Height',
+                  value: bedState.height,
+                  onChanged: (value) => bedState.setHeight(value),
                   max: 100,
                   label: '%',
                 ),
@@ -47,10 +51,10 @@ class AngleControl extends StatelessWidget {
     );
   }
 
-  Widget _buildAngleSlider(
-    String title,
-    double value,
-    Function(double) onChanged, {
+  Widget _buildAngleSlider({
+    required String title,
+    required double value,
+    required Function(double) onChanged,
     double max = 90,
     String label = '°',
   }) {

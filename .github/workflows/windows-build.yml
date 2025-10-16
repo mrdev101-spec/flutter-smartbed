@@ -5,38 +5,50 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-  workflow_dispatch:  # allows manual triggering
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: windows-latest
     
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       
       - name: Install Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.16.0'
           channel: 'stable'
-          
-      - name: Enable Windows Build
+          cache: true
+      
+      - name: Enable Windows Desktop
         run: flutter config --enable-windows-desktop
-        
+      
       - name: Get Dependencies
         run: flutter pub get
-        
+      
       - name: Build Windows App
-        run: flutter build windows
-        
-      - name: Create Release ZIP
+        run: flutter build windows --release
+      
+      - name: Create Installer
         run: |
-          cd build/windows/runner/Release
-          7z a ../../../flutter_smartbed_windows.zip ./*
-          
-      - name: Upload Release
+          Compress-Archive -Path build\windows\runner\Release\* -DestinationPath flutter_smartbed_windows.zip
+      
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: flutter_smartbed_windows.zip
+          name: Flutter Smart Bed v${{ github.ref_name }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: windows-release
-          path: build/flutter_smartbed_windows.zip
+          name: windows-app
+          path: flutter_smartbed_windows.zip
+          retention-days: 90
           retention-days: 90
